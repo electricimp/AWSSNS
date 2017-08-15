@@ -5,15 +5,6 @@ This demo will show you how to subscribe, confirm a subscription and publish a m
 As the sample code includes the private key verbatim in the source, it should be treated carefully, and not checked into version control!
 
 
-## Setting up SNS
-
-1. Go to the sns console
-1. Click "Create Topic"
-1. Enter in "Topic name" testSNS
-1. Enter in "DisplayName" testSNS
-1. Click "Create Topic"
-1. Note your Topic ARN and your Region
-
 ## Setting up AIM Policy
 
 1. Select `Services` link (on the top left of the page) and them type `IAM` in the search line
@@ -45,6 +36,15 @@ As the sample code includes the private key verbatim in the source, it should be
 1. Press `Next: Review`
 1. Press `Create user`
 1. Copy down your `Access key ID` and `Secret access key`
+
+## Setting up SNS
+
+1. Go to the sns console
+1. Click "Create Topic"
+1. Enter in "Topic name" testSNS
+1. Enter in "DisplayName" testSNS
+1. Click "Create Topic"
+1. Note your Topic ARN and your Region
 
 ## Configure the API keys for SNS
 

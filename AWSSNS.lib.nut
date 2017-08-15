@@ -22,14 +22,19 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+const AWSSNS_ACTION_CONFIRM_SUBSCRIPTION        = "ConfirmSubscription";
+const AWSSNS_ACTION_LIST_SUBSCRIPTIONS          = "ListSubscriptions";
+const AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC = "ListSubscriptionsByTopic";
+const AWSSNS_ACTION_LIST_TOPICS                 = "ListTopics";
+const AWSSNS_ACTION_PUBLISH                     = "Publish";
+const AWSSNS_ACTION_SUBSCRIBE                   = "Subscribe";
+const AWSSNS_ACTION_UNSUBSCRIBE                 = "Unsubscribe";
 
 class AWSSNS {
 
     static VERSION = "1.0.0";
-    static SERVICE = "sns";
-    static TARGET_PREFIX = "SNS_20100331";
 
-    _awsRequest = null;    // the aws request object
+    _awsRequest = null;
 
     // 	Parameters:
     //	 region				AWS region
@@ -37,164 +42,26 @@ class AWSSNS {
     //   secretAccessKey    AWS secret access key
     constructor(region, accessKeyId, secretAccessKey) {
         if ("AWSRequestV4" in getroottable()) {
-            _awsRequest = AWSRequestV4(SERVICE, region, accessKeyId, secretAccessKey);
+            _awsRequest = AWSRequestV4("sns", region, accessKeyId, secretAccessKey);
         } else {
             throw ("This class requires AWSRequestV4 - please make sure it is loaded.");
         }
     }
 
-    //	Verifies an endpoint owner's intent to receive messages by validating
-    //   the token sent to the endpoint by an earlier Subscribe action
+    // Performs the specified action
     //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function ConfirmSubscription(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
+    // Parameters:
+    //      params              table of parameters to be sent as part of the request
+    //      cb                  callback function to be called when response received from aws
+    function action(action, params, cb) {
+        local headers = {"Content-Type": "application/x-www-form-urlencoded"};
         local body = {
-            "Action": "ConfirmSubscription",
+            "Action": action,
             "Version": "2010-03-31"
         };
-
         foreach (k,v in params) {
             body[k] <- v;
         }
-
         _awsRequest.post("/", headers, http.urlencode(body), cb);
     }
-
-    //	Returns a xml list of the requester's subscriptions as a string in the response table
-    //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function ListSubscriptions(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-        local body = {
-            "Action": "ListSubscriptions",
-            "Version": "2010-03-31"
-        };
-
-        foreach (k,v in params) {
-            body[k] <- v;
-        }
-
-        _awsRequest.post("/", headers, http.urlencode(body), cb);
-    }
-
-    //	Returns a xml list of the requester's subscriptions as a string in
-    //  the response table
-    //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function ListSubscriptionsByTopic(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-        local body = {
-            "Action": "ListSubscriptionsByTopic",
-            "Version": "2010-03-31"
-        };
-
-        foreach (k,v in params) {
-            body[k] <- v;
-        }
-
-        _awsRequest.post("/", headers, http.urlencode(body), cb);
-    }
-
-
-    //	Returns a xml list of the requester's topics as a string
-    //   in the response table.
-
-    //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function ListTopics(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-        local body = {
-            "Action": "ListTopics",
-            "Version": "2010-03-31"
-        };
-
-        foreach (k,v in params) {
-            body[k] <- v;
-        }
-
-        _awsRequest.post("/", headers, http.urlencode(body), cb);
-    }
-
-    //	Sends a message to an Amazon SNS topic or sends a text message
-    //   (SMS message) directly to a phone number.
-    //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function Publish(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-        local body = {
-            "Action": "Publish",
-            "Version": "2010-03-31"
-        };
-
-        foreach (k,v in params) {
-            body[k] <- v;
-        }
-
-        _awsRequest.post("/", headers, http.urlencode(body), cb);
-    }
-
-    //	Prepares to subscribe an endpoint by sending the endpoint a
-    //   confirmation message.
-    //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function Subscribe(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-        local body = {
-            "Action": "Subscribe",
-            "Version": "2010-03-31"
-        };
-
-        foreach (k,v in params) {
-            body[k] <- v;
-        }
-
-        _awsRequest.post("/", headers, http.urlencode(body), cb);
-    }
-
-    //	Deletes a subscription
-    //
-    // 	Parameters:
-    //    params				table of parameters to be sent as part of the request
-    //    cb                    callback function to be called when response received
-    //							from aws
-    function Unsubscribe(params, cb) {
-        local headers = { "Content-Type": "application/x-www-form-urlencoded" };
-
-        local body = {
-            "Action": "Unsubscribe",
-            "Version": "2010-03-31"
-        };
-
-        foreach (k,v in params) {
-            body[k] <- v;
-        }
-
-        _awsRequest.post("/", headers, http.urlencode(body), cb);
-    }
-
 }

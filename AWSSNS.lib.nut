@@ -36,10 +36,10 @@ class AWSSNS {
 
     _awsRequest = null;
 
-    // 	Parameters:
-    //	 region				AWS region
-    //   accessKeyId		AWS access key Id
-    //   secretAccessKey    AWS secret access key
+    // Parameters:
+    //     region            AWS region
+    //     accessKeyId       AWS access key Id
+    //     secretAccessKey   AWS secret access key
     constructor(region, accessKeyId, secretAccessKey) {
         if ("AWSRequestV4" in getroottable()) {
             _awsRequest = AWSRequestV4("sns", region, accessKeyId, secretAccessKey);

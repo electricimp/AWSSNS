@@ -571,9 +571,9 @@ class AgentTestCase extends ImpTestCase {
 
 
     // cleanup after
-	function tearDown() {
+    function tearDown() {
 
-		local params = {
+        local params = {
             "SubscriptionArn": _subscriptionArn
         }
 
@@ -581,10 +581,10 @@ class AgentTestCase extends ImpTestCase {
 
             _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
 
-				resolve();
+                resolve();
             }.bindenv(this));
         }.bindenv(this));
-	}
+    }
 
 
 }

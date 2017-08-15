@@ -28,7 +28,7 @@ region                 | string         | AWS region (e.g. "us-west-2")
 accessKeyId            | string         | IAM Access Key ID
 secretAccessKey        | string         | IAM Secret Access Key
 
-#### Example
+##### Example
 
 ```squirrel
 const AWS_SNS_ACCESS_KEY_ID     = "YOUR_ACCESS_KEY_ID_HERE";
@@ -71,13 +71,13 @@ Verifies an endpoint owner's intent to receive messages by validating the token 
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ConfirmSubscription.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter 	              | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description             
 ------------------------- | ------- | -------- | ------- | -------------------
 AuthenticateOnUnsubscribe | string  | No       | null    | Disallows unauthenticated unsubscribes of the subscription. If the value of this parameter is true and the request has an AWS signature, then only the topic owner and the subscription owner can unsubscribe the endpoint. The unsubscribe action requires AWS authentication
-Token					  | string  | Yes      | N/A     | Short-lived token sent to an endpoint during the Subscribe action
+Token                     | string  | Yes      | N/A     | Short-lived token sent to an endpoint during the Subscribe action
 TopicArn                  | string  | Yes      | N/A     | The ARN of the topic for which you wish to confirm a subscription
 
-#### Example
+##### Confirm Subscription Example
 <a id="ida"></a>
 ```squirrel
 http.onrequest(function (request, response) {
@@ -114,11 +114,11 @@ Returns a xml list of the requester's subscriptions as a string in the response 
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListSubscriptions.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter 	              | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description             
 ------------------------- | ------- | -------- | ------- | -------------------
-NextToken				  | string	| No	   | null    | Token returned by the previous *ListSubscriptions* request.
+NextToken                 | string  | No       | null    | Token returned by the previous *ListSubscriptions* request.
 
-#### Example
+##### List Subscriptions Example
 
 ```squirrel
 sns.ListSubscriptions({}, function (res){
@@ -132,12 +132,12 @@ Returns a xml list of the subscriptions to a specific topic as a string in the r
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListSubscriptionsByTopic.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter	              | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description             
 ------------------------- | ------- | -------- | ------- |  ------------------
-NextToken				  | string	| No	   | null    | Token returned by the previous *ListSubscriptionsByTopic* request
-TopicArn				  | string  | Yes      | N/A     | The ARN of the topic for which you wish to confirm a subscription
+NextToken                 | string  | No       | null    | Token returned by the previous *ListSubscriptionsByTopic* request
+TopicArn                  | string  | Yes      | N/A     | The ARN of the topic for which you wish to confirm a subscription
 
-#### Example
+##### List Subscriptions By Topic Example
 
 ```squirrel
 // find the endpoint in the response that corresponds to ARN
@@ -177,9 +177,9 @@ Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/ap
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
 Parameter                 | Type    | Required | Default | Description             
 ------------------------- | ------- | -------- | ------- | --------------------
-NextToken				  | string	| No	   | null    | Token returned by the previous ListTopics request.
+NextToken                 | string  | No       | null    | Token returned by the previous ListTopics request.
 
-#### Example
+##### List Topics Example
 
 ```squirrel
 sns.ListTopics({}, function (res) {
@@ -195,24 +195,25 @@ Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/ap
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
 Parameter                | Type    | Required | Default | Description             
 ------------------------ | ------- | -------- | ------- | -------------------
-Message 				 | string  | Yes	  | N/A     | The message you want to send
-MessageAttributes		 | table   | No 	  | null    | MessageAttributes.entry.N.Name (key), MessageAttributesentry.N.Value (value) pairs. see MessageAttributeValue table for more information
-MessageStructure		 | string  | No 	  | null    | Set MessageStructure to json if you want to send a different message for each protocol
-PhoneNumber				 | string  | No 	  | null    | The phone number to which you want to deliver an SMS message
-Subject					 | string  | No 	  | null    | Optional parameter to be used as the "Subject" line when the message is delivered to email endpoints
-TargetArn				 | string  | No 	  | null    | either TopicArn or EndpointArn, but not both
-TopicArn				 | string  | No 	  | null    | The topic you want to publish to
+Message                  | string  | Yes      | N/A     | The message you want to send
+MessageAttributes        | table   | No       | null    | MessageAttributes.entry.N.Name (key), MessageAttributesentry.N.Value (value) pairs. see MessageAttributeValue table for more information
+MessageStructure         | string  | No       | null    | Set MessageStructure to json if you want to send a different message for each protocol
+PhoneNumber              | string  | No       | null    | The phone number to which you want to deliver an SMS message
+Subject                  | string  | No       | null    | Optional parameter to be used as the "Subject" line when the message is delivered to email endpoints
+TargetArn                | string  | No       | null    | either TopicArn or EndpointArn, but not both
+TopicArn                 | string  | No       | null    | The topic you want to publish to
 
 Note : You need at least one of TopicArn, PhoneNumber or TargetArn parameters.
 
 where `MessageAttributes` consists of:
-Parameter                | Type    						 	 | Required | Default | Description             
------------------------- | --------------------------------  | -------- | ------- | -------------------
-BinaryValue				 | base64-encoded binary data object | No		| null    | Binary type attributes can store any binary data, for example, compressed data, encrypted data, or images
-DataType			     | string	 						 | Yes		| N/A     | Amazon SNS supports the following logical data types: String, Number, and Binary
-StringValue				 | string		  					 | No		| null    | Strings are Unicode with UTF8 binary encoding
 
-#### Example
+Parameter                | Type                              | Required | Default | Description             
+------------------------ | --------------------------------  | -------- | ------- | -------------------
+BinaryValue              | base64-encoded binary data object | No       | null    | Binary type attributes can store any binary data, for example, compressed data, encrypted data, or images
+DataType                 | string                            | Yes      | N/A     | Amazon SNS supports the following logical data types: String, Number, and Binary
+StringValue              | string                            | No       | null    | Strings are Unicode with UTF8 binary encoding
+
+##### Publish Example
 
 ```squirrel
 local params = {
@@ -231,13 +232,13 @@ Prepares to subscribe to an endpoint by sending the endpoint a confirmation mess
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter	             | Type    | Required | Default | Description             
+Parameter                | Type    | Required | Default | Description             
 ------------------------ | ------- | -------- | ------- | -------------------
-Endpoint				 | string  | No 	  | null    | The endpoint that you want to receive notifications. Endpoints vary by protocol:
-Protocol				 | string  | Yes	  | N/A     | The protocol you want to use. Supported protocols include: http, https, email, email-json, sms, sqs, application and lambda
-TopicArn				 | string  | Yes 	  | N/A     | The topic you want to publish to
+Endpoint                 | string  | No       | null    | The endpoint that you want to receive notifications. Endpoints vary by protocol
+Protocol                 | string  | Yes      | N/A     | The protocol you want to use. Supported protocols include: http, https, email, email-json, sms, sqs, application and lambda
+TopicArn                 | string  | Yes      | N/A     | The topic you want to publish to
 
-#### Example
+##### Subscribe Example
 
 ```squirrel
 subscribeParams <- {
@@ -258,10 +259,10 @@ Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/ap
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
 Parameter                | Type    | Required | Description             
 ------------------------ | ------- | -------- | --------------------------
-SubscriptionArn			 | string  | Yes 	  | The ARN of the subscription to be deleted
+SubscriptionArn          | string  | Yes      | The ARN of the subscription to be deleted
 
 
-#### Example
+##### Unsubscribe Example
 See ConfirmSubscription [example](#ida) as to how to get a value for SubscriptionArn
 
 ```squirrel
@@ -278,20 +279,21 @@ local params = {
 #### Response Table
 The format of the response table general to all functions
 
-Parameter		      |       Type     | Description
+Parameter             |       Type     | Description
 --------------------- | -------------- | -----------
-body				  | string         | AWS SNS response in a XML data structure which is received as a string.
-statuscode			  | integer		   | http status code
-headers				  | table		   | see headers
+body                  | string         | AWS SNS response in a XML data structure which is received as a string.
+statuscode            | integer        | http status code
+headers               | table          | see headers
 
 where `headers` table consists of:
 
-Parameter		      |       Type     | Description
+
+Parameter             |       Type     | Description
 --------------------- | -------------- | -----------
-x-amzn-requestid	  | string		   | Amazon request id
-content-type		  | string		   | Content type e.g text/XML
-date 				  | string		   | The date and time at which response was sent
-content-length		  | string		   | the length of the content
+x-amzn-requestid      | string         | Amazon request id
+content-type          | string         | Content type e.g text/XML
+date                  | string         | The date and time at which response was sent
+content-length        | string         | the length of the content
 
 # License
 

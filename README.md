@@ -1,5 +1,8 @@
 # AWSSNS
 
+The helper library to implement and perform
+[Amazon SNS](https://aws.amazon.com/documentation/sns/) actions from agent code.
+
 To add this library to your model, add the following lines to the top of your agent code:
 
 ```
@@ -7,33 +10,37 @@ To add this library to your model, add the following lines to the top of your ag
 #require "AWSSNS.lib.nut:1.0.0"
 ```
 
-**Note: [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be loaded.**
+**Note: [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be
+included before the AWSSQS library to make it work.**
 
 Amazon SNS is a fully managed pub/sub messaging service that makes it easy to decouple and scale microservices, distributed systems, and serverless applications. With SNS, you can use topics to decouple message publishers from subscribers, fan-out messages to multiple recipients at once, and eliminate polling in your applications.
 This class can be used to perform actions on the AWS SNS service.
 
 
-
-
-## Class Methods
+## Class Usage
 
 ### constructor(region, accessKeyId, secretAccessKey)
+AWSSNS object constructor which takes the following parameters:
 
-All parameters are strings. Access keys can be generated with IAM.
+Parameter              | Type           | Description
+---------------------- | -------------- | -----------
+region                 | string         | AWS region (e.g. "us-west-2")
+accessKeyId            | string         | IAM Access Key ID
+secretAccessKey        | string         | IAM Secret Access Key
 
 #### Example
 
 ```squirrel
-const AWS_SNS_ACCESS_KEY_ID = "YOUR_KEY_ID_HERE";
-const AWS_SNS_REGION = "YOUR_REGION_HERE";
-const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_KEY_HERE";
-const AWS_SNS_TOPIC_ARN "YOUR AWS SNS TOPIC ARN HERE";
+const AWS_SNS_ACCESS_KEY_ID     = "YOUR_ACCESS_KEY_ID_HERE";
+const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_SECRET_ACCESS_KEY_ID_HERE";
+const AWS_SNS_URL               = "YOUR_SNS_URL_HERE";
+const AWS_SNS_REGION            = "YOUR_REGION_HERE";
 
-sns <- AWSSNS(AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY);
-
+// initialise the class
+sns <- AWSSNS(AWS_SNS_REGION, AWS_SNS_ACCESS_KEY_ID, AWS_SNS_SECRET_ACCESS_KEY);
 ```
 
-
+## Class Methods
 
 ### ConfirmSubscription(params, cb)
 Verifies an endpoint owner's intent to receive messages by validating the token sent to the endpoint by an earlier Subscribe action.

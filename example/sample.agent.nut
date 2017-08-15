@@ -65,12 +65,12 @@ http.onrequest(function(request, response) {
                     "TopicArn": requestBody.TopicArn
                 }
             // confirm the subscription
-            sns.ConfirmSubscription(confirmParams, function(res) {
+            sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                 server.log("Confirmation Response: " + res.statuscode);
                 if (res.statuscode == 200) {
                     // now that the subscription is established publish a message
-                    sns.Publish(PublishParams, function(res) {
+                    sns.action(AWSSNS_ACTION_PUBLISH, PublishParams, function(res) {
 
                         server.log(" Publish Confirmation XML Response: " + res.body);
                     });
@@ -86,6 +86,6 @@ http.onrequest(function(request, response) {
 })
 
 // Subscribe to a topic
-sns.Subscribe(subscribeParams, function(res) {
+sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
     server.log("Subscribe Response: " + res.statuscode);
 });

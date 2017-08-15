@@ -89,16 +89,18 @@ http.onrequest(function (request, response) {
         // Handle an SES SubscriptionConfirmation request
         if ("Type" in requestBody && requestBody.Type == "SubscriptionConfirmation") {
 
-    server.log("Received HTTP Request: AWS_SNS SubscriptionConfirmation");
+            server.log("Received HTTP Request: AWS_SNS SubscriptionConfirmation");
+
             local confirmParams = {
                 "Token": requestBody.Token,
                 "TopicArn": requestBody.TopicArn
-            }
-            sns.ConfirmSubscription(confirmParams, function (res) {
+            };
 
+            sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function (res) {
                 server.log("Confirmation Response: " +res.statuscode);                
             });
         }
+
         response.send(200, "OK");
 
     } catch (exception) {
@@ -106,7 +108,7 @@ http.onrequest(function (request, response) {
         response.send(500, "Internal Server Error: " + exception);
     }
 
-})
+});
 ```
 
 ##### AWSSNS_ACTION_LIST_SUBSCRIPTIONS
@@ -121,10 +123,9 @@ NextToken                 | string  | No       | null    | Token returned by the
 ##### List Subscriptions Example
 
 ```squirrel
-sns.ListSubscriptions({}, function (res){
-
+sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function (res) {
     // do something with res.body the returned xml
-})
+});
 ```
 
 ##### AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC
@@ -147,7 +148,7 @@ local endpointFinder = function (messageBody) {
     local start = messageBody.find(endpoint);
     start = start + endpoint.len();
     return start;
-}
+};
 
 // finds the SubscriptionArn corresponding to the specified endpoint
 local subscriptionFinder = function (messageBody, startIndex) {
@@ -156,18 +157,17 @@ local subscriptionFinder = function (messageBody, startIndex) {
     local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH, startIndex);
     local subscription = messageBody.slice((start + 17), (finish));
     return subscription;
-}
+};
 
-local Params = {
+local params = {
     "TopicArn": "YOUR_TOPIC_ARN_HERE"
-}
+};
 
-sns.ListSubscriptionsByTopic(Params, function (res) {
+sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function (res) {
 
     // finds your specific subscriptionArn
-    local subscriptionArn == subscriptionFinder(res.body, endpointFinder(res.body))
-
-})
+    local subscriptionArn = subscriptionFinder(res.body, endpointFinder(res.body));
+});
 ```
 
 ##### AWSSNS_ACTION_LIST_TOPICS
@@ -182,7 +182,7 @@ NextToken                 | string  | No       | null    | Token returned by the
 ##### List Topics Example
 
 ```squirrel
-sns.ListTopics({}, function (res) {
+sns.action(AWSSNS_ACTION_LIST_TOPICS, {}, function (res) {
 
     // do something with res.body the returned xml
 })
@@ -218,12 +218,12 @@ StringValue              | string                            | No       | null  
 ```squirrel
 local params = {
     "Message": "Hello World",
-    "TopicArn": AWS_SNS_TOPIC_ARN,
-}
+    "TopicArn": AWS_SNS_TOPIC_ARN
+};
 
-sns.Publish(params, function (res) {
+sns.action(AWSSNS_ACTION_PUBLISH, params, function (res) {
     // check the status code for a successful publish res.statuscode
-})
+});
 
 ```
 
@@ -245,9 +245,9 @@ subscribeParams <- {
     "Protocol": "https",
     "TopicArn": "YOUR_TOPIC_ARN_HERE",
     "Endpoint": http.agenturl()
-}
+};
 
-sns.Subscribe(subscribeParams, function (res) {
+sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function (res) {
     server.log("Subscribe Response: " + http.jsonencode(res));
 });
 ```
@@ -268,12 +268,11 @@ See ConfirmSubscription [example](#ida) as to how to get a value for Subscriptio
 ```squirrel
 local params = {
     "SubscriptionArn": YOUR_SUBSCRIPTION_ARN
+};
 
-    sns.Unsubscribe(params, function(res) {
-
-        server.log("Unsubscribe Response: " + http.jsonencode(res));
-    })
-}
+sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
+    server.log("Unsubscribe Response: " + http.jsonencode(res));
+});
 ```
 
 #### Response Table

@@ -7,7 +7,7 @@ To add this library to your model, add the following lines to the top of your ag
 
 ```
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSSNS.lib.nut:1.0.0"
+#require "AWSSNS.agent.lib.nut:1.0.0"
 ```
 
 **Note: [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be

@@ -24,7 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSSNS.lib.nut:1.0.0"
+#require "AWSSNS.agent.lib.nut:1.0.0"
 
 
 

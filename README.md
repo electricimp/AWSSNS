@@ -28,7 +28,7 @@ region                 | string         | AWS region (e.g. "us-west-2")
 accessKeyId            | string         | IAM Access Key ID
 secretAccessKey        | string         | IAM Secret Access Key
 
-##### Example
+#### Example
 
 ```squirrel
 const AWS_SNS_ACCESS_KEY_ID     = "YOUR_ACCESS_KEY_ID_HERE";
@@ -66,12 +66,12 @@ Action Type                                                                     
 
 #### Action parameters
 
-##### AWSSNS_ACTION_CONFIRM_SUBSCRIPTION
+#### AWSSNS_ACTION_CONFIRM_SUBSCRIPTION
 Verifies an endpoint owner's intent to receive messages by validating the token sent to the endpoint by an earlier Subscribe action.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ConfirmSubscription.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                 | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description
 ------------------------- | ------- | -------- | ------- | -------------------
 AuthenticateOnUnsubscribe | string  | No       | null    | Disallows unauthenticated unsubscribes of the subscription. If the value of this parameter is true and the request has an AWS signature, then only the topic owner and the subscription owner can unsubscribe the endpoint. The unsubscribe action requires AWS authentication
 Token                     | string  | Yes      | N/A     | Short-lived token sent to an endpoint during the Subscribe action
@@ -97,7 +97,7 @@ http.onrequest(function (request, response) {
             };
 
             sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function (res) {
-                server.log("Confirmation Response: " +res.statuscode);                
+                server.log("Confirmation Response: " +res.statuscode);
             });
         }
 
@@ -111,12 +111,12 @@ http.onrequest(function (request, response) {
 });
 ```
 
-##### AWSSNS_ACTION_LIST_SUBSCRIPTIONS
+#### AWSSNS_ACTION_LIST_SUBSCRIPTIONS
 Returns a xml list of the requester's subscriptions as a string in the response table.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListSubscriptions.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                 | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description
 ------------------------- | ------- | -------- | ------- | -------------------
 NextToken                 | string  | No       | null    | Token returned by the previous *ListSubscriptions* request.
 
@@ -128,12 +128,12 @@ sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function (res) {
 });
 ```
 
-##### AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC
+#### AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC
 Returns a xml list of the subscriptions to a specific topic as a string in the response table.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListSubscriptionsByTopic.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                 | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description
 ------------------------- | ------- | -------- | ------- |  ------------------
 NextToken                 | string  | No       | null    | Token returned by the previous *ListSubscriptionsByTopic* request
 TopicArn                  | string  | Yes      | N/A     | The ARN of the topic for which you wish to confirm a subscription
@@ -170,12 +170,12 @@ sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function (res) {
 });
 ```
 
-##### AWSSNS_ACTION_LIST_TOPICS
+#### AWSSNS_ACTION_LIST_TOPICS
 Returns a xml list of the requester's topics as a string in the response table.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListTopics.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                 | Type    | Required | Default | Description             
+Parameter                 | Type    | Required | Default | Description
 ------------------------- | ------- | -------- | ------- | --------------------
 NextToken                 | string  | No       | null    | Token returned by the previous ListTopics request.
 
@@ -188,12 +188,12 @@ sns.action(AWSSNS_ACTION_LIST_TOPICS, {}, function (res) {
 })
 ```
 
-##### AWSSNS_ACTION_PUBLISH
+#### AWSSNS_ACTION_PUBLISH
 Sends a message to an Amazon SNS topic or sends a text message (SMS message) directly to a phone number.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Publish.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                | Type    | Required | Default | Description             
+Parameter                | Type    | Required | Default | Description
 ------------------------ | ------- | -------- | ------- | -------------------
 Message                  | string  | Yes      | N/A     | The message you want to send
 MessageAttributes        | table   | No       | null    | MessageAttributes.entry.N.Name (key), MessageAttributesentry.N.Value (value) pairs. see MessageAttributeValue table for more information
@@ -207,7 +207,7 @@ Note : You need at least one of TopicArn, PhoneNumber or TargetArn parameters.
 
 where `MessageAttributes` consists of:
 
-Parameter                | Type                              | Required | Default | Description             
+Parameter                | Type                              | Required | Default | Description
 ------------------------ | --------------------------------  | -------- | ------- | -------------------
 BinaryValue              | base64-encoded binary data object | No       | null    | Binary type attributes can store any binary data, for example, compressed data, encrypted data, or images
 DataType                 | string                            | Yes      | N/A     | Amazon SNS supports the following logical data types: String, Number, and Binary
@@ -227,12 +227,12 @@ sns.action(AWSSNS_ACTION_PUBLISH, params, function (res) {
 
 ```
 
-##### AWSSNS_ACTION_SUBSCRIBE
+#### AWSSNS_ACTION_SUBSCRIBE
 Prepares to subscribe to an endpoint by sending the endpoint a confirmation message.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                | Type    | Required | Default | Description             
+Parameter                | Type    | Required | Default | Description
 ------------------------ | ------- | -------- | ------- | -------------------
 Endpoint                 | string  | No       | null    | The endpoint that you want to receive notifications. Endpoints vary by protocol
 Protocol                 | string  | Yes      | N/A     | The protocol you want to use. Supported protocols include: http, https, email, email-json, sms, sqs, application and lambda
@@ -252,12 +252,12 @@ sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function (res) {
 });
 ```
 
-##### AWSSNS_ACTION_UNSUBSCRIBE
+#### AWSSNS_ACTION_UNSUBSCRIBE
 Deletes a subscription.
 Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Unsubscribe.html) for more information.
 
 ##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
-Parameter                | Type    | Required | Description             
+Parameter                | Type    | Required | Description
 ------------------------ | ------- | -------- | --------------------------
 SubscriptionArn          | string  | Yes      | The ARN of the subscription to be deleted
 
@@ -275,7 +275,7 @@ sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
 });
 ```
 
-#### Response Table
+### Response Table
 The format of the response table general to all functions
 
 Parameter             |       Type     | Description

@@ -44,7 +44,7 @@ class AWSSNS {
         if ("AWSRequestV4" in getroottable()) {
             _awsRequest = AWSRequestV4("sns", region, accessKeyId, secretAccessKey);
         } else {
-            throw ("This class requires AWSRequestV4 - please make sure it is loaded.");
+            throw("This class requires AWSRequestV4 - please make sure it is loaded.");
         }
     }
 

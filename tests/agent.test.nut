@@ -1,4 +1,3 @@
-
 // MIT License
 //
 // Copyright 2017 Electric Imp
@@ -23,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-// Enter your AWS information here
+// Please enter your AWS keys, region and SNS Topic ARN
 const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE"
 const AWS_SNS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_HERE";
 const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY_HERE";
@@ -52,7 +51,8 @@ class AgentTestCase extends ImpTestCase {
     _sns = null;
     _subscriptionArn = null;
     _endpoint = null;
-    // setup initialising
+
+    // setUp initialises the class, subscribes to a topic and confirms that subscription
     function setUp() {
 
         local subscribeParams = {
@@ -146,8 +146,6 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
     // test the confirming of a subscription
     // checks that it no longer pending a subscription
     // checks for a successful http response
@@ -211,8 +209,6 @@ class AgentTestCase extends ImpTestCase {
             _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
-
-
 
     // uses the subscription initialised in setup
     // test the list of subscriptions, checking against the status code
@@ -280,7 +276,6 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
     // uses the subscription initialised in setup
     // test the list of subscriptions for a specific topic, checking against the status code
     // also checking if the subscription we put in the topic is retrievable
@@ -333,8 +328,6 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
-
     // test the list of Topics, checking against the status code
     // also checking if the Topic we are subscribing to is is retrievable
     function testListTopics() {
@@ -354,8 +347,6 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
         }.bindenv(this));
     }
-
-
 
     // tests that the publish function is sent correctly, checks against the statuscode received
     function testPublish() {
@@ -382,8 +373,6 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
         }.bindenv(this));
     }
-
-
 
     // uses the subscription from setup
     // unsubscribe the subscription from sns check against the statuscode
@@ -414,8 +403,6 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
     // Fail to unsubscribe the subscription from sns check against the statuscode
     // check to ensure that the subscription is still present
     function testFailUnsubscribe() {
@@ -437,8 +424,6 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
         }.bindenv(this));
     }
-
-
 
     // test obtaining a list of subscriptions for a an invalid topic
     // tests by confirming a http bad request status
@@ -464,8 +449,6 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
-
     // test the list of Topics, checking against the status code
     // also checking if the Topic we are subscribing to is is retrievable
     function testListTopics() {
@@ -485,8 +468,6 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
         }.bindenv(this));
     }
-
-
 
     // tests that the publish function is sent correctly, checks against the statuscode received
     function testPublish() {
@@ -515,8 +496,6 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
-
     // test publishing to a non existent topicArn, should receive a http status code 400
     function testFailPublish() {
 
@@ -542,8 +521,6 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
     // Invalid number of parameters checks status code for Confirmation
     function testFailSubscribe() {
 
@@ -568,8 +545,6 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
-
     // cleanup after
     function tearDown() {
 
@@ -585,6 +560,4 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
         }.bindenv(this));
     }
-
-
 }

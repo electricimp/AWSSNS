@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 // Please enter your AWS keys, region and SNS Topic ARN
-const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE"
+const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE";
 const AWS_SNS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_HERE";
 const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY_HERE";
 const AWS_SNS_TOPIC_ARN = "YOUR_TOPIC_ARN_HERE";
@@ -59,7 +59,7 @@ class AgentTestCase extends ImpTestCase {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
         // Only want to perform the assertions once
         local firstInstanceConfirmation = true;
         // Finds the subscription ID
@@ -69,7 +69,7 @@ class AgentTestCase extends ImpTestCase {
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         _sns = AWSSNS(AWS_SNS_TEST_REGION, AWS_SNS_ACCESS_KEY_ID, AWS_SNS_SECRET_ACCESS_KEY);
         _endpoint = http.agenturl();
@@ -88,7 +88,7 @@ class AgentTestCase extends ImpTestCase {
                         local confirmParams = {
                             "Token": requestBody.Token,
                             "TopicArn": requestBody.TopicArn
-                        }
+                        };
                         _sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                             try {
@@ -122,7 +122,7 @@ class AgentTestCase extends ImpTestCase {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
 
         // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
@@ -130,7 +130,7 @@ class AgentTestCase extends ImpTestCase {
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -162,13 +162,13 @@ class AgentTestCase extends ImpTestCase {
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -185,7 +185,7 @@ class AgentTestCase extends ImpTestCase {
                         local confirmParams = {
                             "Token": requestBody.Token,
                             "TopicArn": requestBody.TopicArn
-                        }
+                        };
                         _sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                             try {
@@ -224,11 +224,10 @@ class AgentTestCase extends ImpTestCase {
                 return null;
             }
             else {
-                start = start + endpoint.len();
+                start += endpoint.len();
                 return start;
             }
-
-        }
+        };
 
         // Finds the SubscriptionArn corresponding to the specified endpoint
         local subscriptionFinder = function(messageBody, startIndex) {
@@ -237,14 +236,14 @@ class AgentTestCase extends ImpTestCase {
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH, startIndex);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
             imp.wakeup(5, function() {
                 _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
 
-                    if(endpointFinder(res.body, _endpoint) == null) {
+                    if (endpointFinder(res.body, _endpoint) == null) {
                         imp.wakeup(5, function() {
 
                             _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
@@ -283,9 +282,9 @@ class AgentTestCase extends ImpTestCase {
     // Also checking if the subscription we put in the topic is retrievable
     function testListSubscriptionsTopic() {
 
-        local Params = {
+        local params = {
             "TopicArn": AWS_SNS_TOPIC_ARN
-        }
+        };
 
         // Only want to perform the assertions once
         local firstInstanceConfirmation = true;
@@ -294,15 +293,15 @@ class AgentTestCase extends ImpTestCase {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
 
         // Find the endpoint in the response that corresponds to ARN
         local endpointFinder = function(messageBody, endpoint) {
 
             local start = messageBody.find(endpoint);
-            start = start + endpoint.len();
+            start += endpoint.len();
             return start;
-        }
+        };
 
         // Finds the SubscriptionArn corresponding to the specified endpoint
         local subscriptionFinder = function(messageBody, startIndex) {
@@ -311,11 +310,11 @@ class AgentTestCase extends ImpTestCase {
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH, startIndex);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, Params, function(res) {
+            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
 
                 try {
                     this.assertTrue(_subscriptionArn == subscriptionFinder(res.body, endpointFinder(res.body, _endpoint)), "Actual Arn " + subscriptionFinder(res.body, endpointFinder(res.body, _endpoint)));
@@ -327,7 +326,6 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
 
         }.bindenv(this));
-
 
     }
 
@@ -357,8 +355,8 @@ class AgentTestCase extends ImpTestCase {
         // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
-            "TopicArn": AWS_SNS_TOPIC_ARN,
-        }
+            "TopicArn": AWS_SNS_TOPIC_ARN
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -384,7 +382,7 @@ class AgentTestCase extends ImpTestCase {
 
         local params = {
             "SubscriptionArn": _subscriptionArn
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -412,7 +410,7 @@ class AgentTestCase extends ImpTestCase {
 
         local params = {
             "SubscriptionArn": AWS_SNS_INVALID_SUBSCRIPTION_ARN
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -433,13 +431,13 @@ class AgentTestCase extends ImpTestCase {
     function testFailListSubscriptionTopic() {
 
         // Params with an invalid topic
-        local Params = {
+        local params = {
             "TopicArn": AWS_SNS_INVALID_TOPIC_ARN
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, Params, function(res) {
+            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -478,8 +476,8 @@ class AgentTestCase extends ImpTestCase {
         // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
-            "TopicArn": AWS_SNS_TOPIC_ARN,
-        }
+            "TopicArn": AWS_SNS_TOPIC_ARN
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -493,7 +491,6 @@ class AgentTestCase extends ImpTestCase {
                     reject(e);
                 }
 
-
             }.bindenv(this));
         }.bindenv(this));
 
@@ -505,8 +502,8 @@ class AgentTestCase extends ImpTestCase {
         // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
-            "TopicArn": AWS_SNS_INVALID_TOPIC_ARN,
-        }
+            "TopicArn": AWS_SNS_INVALID_TOPIC_ARN
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -530,7 +527,7 @@ class AgentTestCase extends ImpTestCase {
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "Endpoint": http.agenturl()
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
@@ -553,14 +550,14 @@ class AgentTestCase extends ImpTestCase {
 
         local params = {
             "SubscriptionArn": _subscriptionArn
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
             _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
-
                 resolve();
             }.bindenv(this));
+
         }.bindenv(this));
     }
 }

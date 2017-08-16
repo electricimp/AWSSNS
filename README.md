@@ -13,10 +13,6 @@ To add this library to your model, add the following lines to the top of your ag
 **Note: [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be
 included before the AWSSQS library to make it work.**
 
-Amazon SNS is a fully managed pub/sub messaging service that makes it easy to decouple and scale microservices, distributed systems, and serverless applications. With SNS, you can use topics to decouple message publishers from subscribers, fan-out messages to multiple recipients at once, and eliminate polling in your applications.
-This class can be used to perform actions on the AWS SNS service.
-
-
 ## Class Usage
 
 ### constructor(region, accessKeyId, secretAccessKey)

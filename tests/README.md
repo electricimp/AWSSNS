@@ -10,10 +10,10 @@ As the sample code includes the private key verbatim in the source, it should be
 1. Login to the [AWS console](https://aws.amazon.com/console/)
 1. Select `Services link` (on the top left of the page) and then type `SNS` in the search line
 1. Select `Simple Notification Service`
-1. Click "Create Topic"
-1. Enter in "Topic name" testSNS
-1. Enter in "DisplayName" testSNS
-1. Click "Create Topic"
+1. Click `Create Topic`
+1. Enter in `Topic name` "testSNS"
+1. Enter in `DisplayName` "testSNS"
+1. Click `Create Topic`
 1. Note your Topic ARN and your Region
 
 

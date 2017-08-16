@@ -32,10 +32,10 @@ const AWS_SNS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_HERE";
 const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY_HERE";
 const AWS_SNS_TOPIC_ARN = "YOUR_TOPIC_ARN_HERE";
 
-// initialise the class
+// Initialise the class
 sns <- AWSSNS(AWS_SNS_TEST_REGION, AWS_SNS_ACCESS_KEY_ID, AWS_SNS_SECRET_ACCESS_KEY);
 
-// parameters for specified functions
+// Parameters for specified functions
 subscribeParams <- {
     "Protocol": "https",
     "TopicArn": AWS_SNS_TOPIC_ARN,
@@ -62,12 +62,12 @@ http.onrequest(function(request, response) {
                 "TopicArn": requestBody.TopicArn
             }
 
-            // confirm the subscription
+            // Confirm the subscription
             sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
                 server.log("Confirmation Response: " + res.statuscode);
 
                 if (res.statuscode == 200) {
-                    // now that the subscription is established publish a message
+                    // Now that the subscription is established publish a message
                     sns.action(AWSSNS_ACTION_PUBLISH, publishParams, function(res) {
                         server.log(" Publish Confirmation XML Response: " + res.body);
                     });

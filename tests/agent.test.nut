@@ -38,11 +38,11 @@ const AWS_TEST_HTTP_RESPONSE_BAD_REQUEST = 400;
 const AWS_SNS_INVALID_TOPIC_ARN = "arn:adr:spc:us-middle-2:371007585114:derder";
 const AWS_SNS_INVALID_SUBSCRIPTION_ARN = "AABBCCDDEEFFGG";
 
-// identifiers in the string of xml
+// Identifiers in the string of xml
 const AWS_SNS_SUBSCRIPTION_ARN_START = "<SubscriptionArn>";
 const AWS_SNS_SUBSCRIPTION_ARN_FINISH = "</SubscriptionArn>";
 
-// parameters
+// Parameters
 const AWS_SNS_PROTOCOL_HTTPS = "https";
 const AWS_SNS_MESSAGE = "Hello World";
 
@@ -60,8 +60,9 @@ class AgentTestCase extends ImpTestCase {
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
         }
-        local firstInstanceConfirmation = true; // only want to perform the assertions once
-        // finds the subscription ID,
+        // Only want to perform the assertions once
+        local firstInstanceConfirmation = true;
+        // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START);
@@ -75,7 +76,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            // initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
+            // Initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
             http.onrequest(function(request, response) {
 
                 response.send(200, "OK");
@@ -107,14 +108,14 @@ class AgentTestCase extends ImpTestCase {
 
             }.bindenv(this));
 
-            // fresh subscribe to ensure timely http message sent to the agent
+            // Fresh subscribe to ensure timely http message sent to the agent
             _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
 
-    // test the subscribe function
-    // checks that it receives a successful http response
-    // also check that the subscription arn has not been assigned yet
+    // Test the subscribe function
+    // Checks that it receives a successful http response
+    // Also check that the subscription arn has not been assigned yet
     function testSubscribe() {
 
         local subscribeParams = {
@@ -123,7 +124,7 @@ class AgentTestCase extends ImpTestCase {
             "Endpoint": http.agenturl()
         }
 
-        // finds the subscription ID,
+        // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START);
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
@@ -146,14 +147,15 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-    // test the confirming of a subscription
-    // checks that it no longer pending a subscription
-    // checks for a successful http response
+    // Test the confirming of a subscription
+    // Checks that it no longer pending a subscription
+    // Checks for a successful http response
     function testConfirmSubscription() {
 
-        local firstInstanceConfirmation = true; // only want to perform the assertions once
+        // Only want to perform the assertions once
+        local firstInstanceConfirmation = true;
 
-        // finds the subscription ID,
+        // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START);
@@ -171,7 +173,7 @@ class AgentTestCase extends ImpTestCase {
         return Promise(function(resolve, reject) {
 
 
-            // initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
+            // Initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
             http.onrequest(function(request, response) {
 
                 response.send(200, "OK");
@@ -205,17 +207,17 @@ class AgentTestCase extends ImpTestCase {
 
             }.bindenv(this));
 
-            // fresh subscribe to ensure timely http message sent to the agent
+            // Fresh subscribe to ensure timely http message sent to the agent
             _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
 
-    // uses the subscription initialised in setup
-    // test the list of subscriptions, checking against the status code
-    // also checking if the subscription we put in previously is retrievable
+    // Uses the subscription initialised in setup
+    // Test the list of subscriptions, checking against the status code
+    // Also checking if the subscription we put in previously is retrievable
     function testListSubscriptions() {
 
-        // find the endpoint in the response that corresponds to ARN
+        // Find the endpoint in the response that corresponds to ARN
         local endpointFinder = function(messageBody, endpoint) {
             local start = messageBody.find(endpoint);
             if (start == null) {
@@ -228,7 +230,7 @@ class AgentTestCase extends ImpTestCase {
 
         }
 
-        // finds the SubscriptionArn corresponding to the specified endpoint
+        // Finds the SubscriptionArn corresponding to the specified endpoint
         local subscriptionFinder = function(messageBody, startIndex) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START, startIndex);
@@ -276,16 +278,17 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-    // uses the subscription initialised in setup
-    // test the list of subscriptions for a specific topic, checking against the status code
-    // also checking if the subscription we put in the topic is retrievable
+    // Uses the subscription initialised in setup
+    // Test the list of subscriptions for a specific topic, checking against the status code
+    // Also checking if the subscription we put in the topic is retrievable
     function testListSubscriptionsTopic() {
 
         local Params = {
             "TopicArn": AWS_SNS_TOPIC_ARN
         }
 
-        local firstInstanceConfirmation = true; // only want to perform the assertions once
+        // Only want to perform the assertions once
+        local firstInstanceConfirmation = true;
 
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
@@ -293,7 +296,7 @@ class AgentTestCase extends ImpTestCase {
             "Endpoint": http.agenturl()
         }
 
-        // find the endpoint in the response that corresponds to ARN
+        // Find the endpoint in the response that corresponds to ARN
         local endpointFinder = function(messageBody, endpoint) {
 
             local start = messageBody.find(endpoint);
@@ -301,7 +304,7 @@ class AgentTestCase extends ImpTestCase {
             return start;
         }
 
-        // finds the SubscriptionArn corresponding to the specified endpoint
+        // Finds the SubscriptionArn corresponding to the specified endpoint
         local subscriptionFinder = function(messageBody, startIndex) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START, startIndex);
@@ -328,8 +331,8 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-    // test the list of Topics, checking against the status code
-    // also checking if the Topic we are subscribing to is is retrievable
+    // Test the list of Topics, checking against the status code
+    // Also checking if the Topic we are subscribing to is is retrievable
     function testListTopics() {
 
         return Promise(function(resolve, reject) {
@@ -348,10 +351,10 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-    // tests that the publish function is sent correctly, checks against the statuscode received
+    // Tests that the publish function is sent correctly, checks against the statuscode received
     function testPublish() {
 
-        // required params to publish
+        // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
             "TopicArn": AWS_SNS_TOPIC_ARN,
@@ -362,7 +365,7 @@ class AgentTestCase extends ImpTestCase {
             _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
 
                 try {
-                    // checks the received status code
+                    // Checks the received status code
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
                     resolve();
                 } catch (e) {
@@ -374,9 +377,9 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-    // uses the subscription from setup
-    // unsubscribe the subscription from sns check against the statuscode
-    // also checking that the subscription is no longer listed
+    // Uses the subscription from setup
+    // Unsubscribe the subscription from sns check against the statuscode
+    // Also checking that the subscription is no longer listed
     function testUnsubscribe() {
 
         local params = {
@@ -404,7 +407,7 @@ class AgentTestCase extends ImpTestCase {
     }
 
     // Fail to unsubscribe the subscription from sns check against the statuscode
-    // check to ensure that the subscription is still present
+    // Check to ensure that the subscription is still present
     function testFailUnsubscribe() {
 
         local params = {
@@ -425,11 +428,11 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-    // test obtaining a list of subscriptions for a an invalid topic
-    // tests by confirming a http bad request status
+    // Test obtaining a list of subscriptions for a an invalid topic
+    // Tests by confirming a http bad request status
     function testFailListSubscriptionTopic() {
 
-        // params with an invalid topic
+        // Params with an invalid topic
         local Params = {
             "TopicArn": AWS_SNS_INVALID_TOPIC_ARN
         }
@@ -449,8 +452,8 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-    // test the list of Topics, checking against the status code
-    // also checking if the Topic we are subscribing to is is retrievable
+    // Test the list of Topics, checking against the status code
+    // Also checking if the Topic we are subscribing to is is retrievable
     function testListTopics() {
 
         return Promise(function(resolve, reject) {
@@ -469,10 +472,10 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-    // tests that the publish function is sent correctly, checks against the statuscode received
+    // Tests that the publish function is sent correctly, checks against the statuscode received
     function testPublish() {
 
-        // required params to publish
+        // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
             "TopicArn": AWS_SNS_TOPIC_ARN,
@@ -483,7 +486,7 @@ class AgentTestCase extends ImpTestCase {
             _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
 
                 try {
-                    // checks the received status code
+                    // Checks the received status code
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
                     resolve();
                 } catch (e) {
@@ -496,10 +499,10 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-    // test publishing to a non existent topicArn, should receive a http status code 400
+    // Test publishing to a non existent topicArn, should receive a http status code 400
     function testFailPublish() {
 
-        // required params to publish
+        // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
             "TopicArn": AWS_SNS_INVALID_TOPIC_ARN,
@@ -510,7 +513,7 @@ class AgentTestCase extends ImpTestCase {
             _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
 
                 try {
-                    // checks the received status code
+                    // Checks the received status code
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
                     resolve();
                 } catch (e) {
@@ -545,7 +548,7 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-    // cleanup after
+    // Cleanup after
     function tearDown() {
 
         local params = {

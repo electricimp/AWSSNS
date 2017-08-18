@@ -1,4 +1,3 @@
-
 // MIT License
 //
 // Copyright 2017 Electric Imp
@@ -23,12 +22,11 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-// Enter your AWS information here
-const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE"
+// Please enter your AWS keys, region and SNS Topic ARN
+const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE";
 const AWS_SNS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_HERE";
 const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY_HERE";
 const AWS_SNS_TOPIC_ARN = "YOUR_TOPIC_ARN_HERE";
-
 
 // HTTP status codes
 const AWS_TEST_HTTP_RESPONSE_SUCCESS = 200;
@@ -40,59 +38,58 @@ const AWS_TEST_HTTP_RESPONSE_BAD_REQUEST = 400;
 const AWS_SNS_INVALID_TOPIC_ARN = "arn:adr:spc:us-middle-2:371007585114:derder";
 const AWS_SNS_INVALID_SUBSCRIPTION_ARN = "AABBCCDDEEFFGG";
 
-// identifiers in the string of xml
+// Identifiers in the string of xml
 const AWS_SNS_SUBSCRIPTION_ARN_START = "<SubscriptionArn>";
 const AWS_SNS_SUBSCRIPTION_ARN_FINISH = "</SubscriptionArn>";
 
-// parameters
+// Parameters
 const AWS_SNS_PROTOCOL_HTTPS = "https";
 const AWS_SNS_MESSAGE = "Hello World";
-
-
-
 
 class AgentTestCase extends ImpTestCase {
 
     _sns = null;
     _subscriptionArn = null;
     _endpoint = null;
-    // setup initialising
+
+    // setUp initialises the class, subscribes to a topic and confirms that subscription
     function setUp() {
 
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
-        local firstInstanceConfirmation = true; // only want to perform the assertions once
-        // finds the subscription ID,
+        };
+        // Only want to perform the assertions once
+        local firstInstanceConfirmation = true;
+        // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START);
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         _sns = AWSSNS(AWS_SNS_TEST_REGION, AWS_SNS_ACCESS_KEY_ID, AWS_SNS_SECRET_ACCESS_KEY);
         _endpoint = http.agenturl();
 
         return Promise(function(resolve, reject) {
 
-            // initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
+            // Initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
             http.onrequest(function(request, response) {
 
                 response.send(200, "OK");
 
                 try {
-                    // Handle an SES SubscriptionConfirmation request
+                    // Handle an SNS SubscriptionConfirmation request
                     local requestBody = http.jsondecode(request.body);
                     if ("Type" in requestBody && requestBody.Type == "SubscriptionConfirmation") {
                         local confirmParams = {
                             "Token": requestBody.Token,
                             "TopicArn": requestBody.TopicArn
-                        }
-                        _sns.ConfirmSubscription(confirmParams, function(res) {
+                        };
+                        _sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                             try {
                                 if (firstInstanceConfirmation == true) {
@@ -111,33 +108,33 @@ class AgentTestCase extends ImpTestCase {
 
             }.bindenv(this));
 
-            // fresh subscribe to ensure timely http message sent to the agent
-            _sns.Subscribe(subscribeParams, function(res) {});
+            // Fresh subscribe to ensure timely http message sent to the agent
+            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
 
-    // test the subscribe function
-    // checks that it receives a successful http response
-    // also check that the subscription arn has not been assigned yet
+    // Test the subscribe function
+    // Checks that it receives a successful http response
+    // Also check that the subscription arn has not been assigned yet
     function testSubscribe() {
 
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
 
-        // finds the subscription ID,
+        // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START);
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Subscribe(subscribeParams, function(res) {
+            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
 
                 try {
                     this.assertTrue(subscriptionFinder(res.body) == "pending confirmation", "actual status " + subscriptionFinder(res.body));
@@ -150,34 +147,33 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
-    // test the confirming of a subscription
-    // checks that it no longer pending a subscription
-    // checks for a successful http response
+    // Test the confirming of a subscription
+    // Checks that it no longer pending a subscription
+    // Checks for a successful http response
     function testConfirmSubscription() {
 
-        local firstInstanceConfirmation = true; // only want to perform the assertions once
+        // Only want to perform the assertions once
+        local firstInstanceConfirmation = true;
 
-        // finds the subscription ID,
+        // Finds the subscription ID
         local subscriptionFinder = function(messageBody) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START);
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
 
-            // initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
+            // Initialise an asynchronous function to receive the token necessary for a confirmation of a subscription
             http.onrequest(function(request, response) {
 
                 response.send(200, "OK");
@@ -189,8 +185,8 @@ class AgentTestCase extends ImpTestCase {
                         local confirmParams = {
                             "Token": requestBody.Token,
                             "TopicArn": requestBody.TopicArn
-                        }
-                        _sns.ConfirmSubscription(confirmParams, function(res) {
+                        };
+                        _sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                             try {
                                 if (firstInstanceConfirmation == true) {
@@ -211,49 +207,46 @@ class AgentTestCase extends ImpTestCase {
 
             }.bindenv(this));
 
-            // fresh subscribe to ensure timely http message sent to the agent
-            _sns.Subscribe(subscribeParams, function(res) {});
+            // Fresh subscribe to ensure timely http message sent to the agent
+            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
 
-
-
-    // uses the subscription initialised in setup
-    // test the list of subscriptions, checking against the status code
-    // also checking if the subscription we put in previously is retrievable
+    // Uses the subscription initialised in setup
+    // Test the list of subscriptions, checking against the status code
+    // Also checking if the subscription we put in previously is retrievable
     function testListSubscriptions() {
 
-        // find the endpoint in the response that corresponds to ARN
+        // Find the endpoint in the response that corresponds to ARN
         local endpointFinder = function(messageBody, endpoint) {
             local start = messageBody.find(endpoint);
             if (start == null) {
                 return null;
             }
             else {
-                start = start + endpoint.len();
+                start += endpoint.len();
                 return start;
             }
+        };
 
-        }
-
-        // finds the SubscriptionArn corresponding to the specified endpoint
+        // Finds the SubscriptionArn corresponding to the specified endpoint
         local subscriptionFinder = function(messageBody, startIndex) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START, startIndex);
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH, startIndex);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
             imp.wakeup(5, function() {
-                _sns.ListSubscriptions({}, function(res) {
+                _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
 
-                    if(endpointFinder(res.body, _endpoint) == null) {
+                    if (endpointFinder(res.body, _endpoint) == null) {
                         imp.wakeup(5, function() {
 
-                            _sns.ListSubscriptions({}, function(res) {
+                            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
 
                                 try {
                                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
@@ -284,44 +277,44 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
-    // uses the subscription initialised in setup
-    // test the list of subscriptions for a specific topic, checking against the status code
-    // also checking if the subscription we put in the topic is retrievable
+    // Uses the subscription initialised in setup
+    // Test the list of subscriptions for a specific topic, checking against the status code
+    // Also checking if the subscription we put in the topic is retrievable
     function testListSubscriptionsTopic() {
 
-        local Params = {
+        local params = {
             "TopicArn": AWS_SNS_TOPIC_ARN
-        }
+        };
 
-        local firstInstanceConfirmation = true; // only want to perform the assertions once
+        // Only want to perform the assertions once
+        local firstInstanceConfirmation = true;
 
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "TopicArn": AWS_SNS_TOPIC_ARN,
             "Endpoint": http.agenturl()
-        }
+        };
 
-        // find the endpoint in the response that corresponds to ARN
+        // Find the endpoint in the response that corresponds to ARN
         local endpointFinder = function(messageBody, endpoint) {
 
             local start = messageBody.find(endpoint);
-            start = start + endpoint.len();
+            start += endpoint.len();
             return start;
-        }
+        };
 
-        // finds the SubscriptionArn corresponding to the specified endpoint
+        // Finds the SubscriptionArn corresponding to the specified endpoint
         local subscriptionFinder = function(messageBody, startIndex) {
 
             local start = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_START, startIndex);
             local finish = messageBody.find(AWS_SNS_SUBSCRIPTION_ARN_FINISH, startIndex);
             local subscription = messageBody.slice((start + 17), (finish));
             return subscription;
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.ListSubscriptionsByTopic(Params, function(res) {
+            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
 
                 try {
                     this.assertTrue(_subscriptionArn == subscriptionFinder(res.body, endpointFinder(res.body, _endpoint)), "Actual Arn " + subscriptionFinder(res.body, endpointFinder(res.body, _endpoint)));
@@ -334,18 +327,15 @@ class AgentTestCase extends ImpTestCase {
 
         }.bindenv(this));
 
-
     }
 
-
-
-    // test the list of Topics, checking against the status code
-    // also checking if the Topic we are subscribing to is is retrievable
+    // Test the list of Topics, checking against the status code
+    // Also checking if the Topic we are subscribing to is is retrievable
     function testListTopics() {
 
         return Promise(function(resolve, reject) {
 
-            _sns.ListTopics({}, function(res) {
+            _sns.action(AWSSNS_ACTION_LIST_TOPICS, {}, function(res) {
 
                 try {
                     this.assertTrue(res.body.find(AWS_SNS_TOPIC_ARN) != null, "TopicArn not found");
@@ -359,23 +349,21 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
-    // tests that the publish function is sent correctly, checks against the statuscode received
+    // Tests that the publish function is sent correctly, checks against the statuscode received
     function testPublish() {
 
-        // required params to publish
+        // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
-            "TopicArn": AWS_SNS_TOPIC_ARN,
-        }
+            "TopicArn": AWS_SNS_TOPIC_ARN
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Publish(params, function(res) {
+            _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
 
                 try {
-                    // checks the received status code
+                    // Checks the received status code
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
                     resolve();
                 } catch (e) {
@@ -387,25 +375,23 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
-    // uses the subscription from setup
-    // unsubscribe the subscription from sns check against the statuscode
-    // also checking that the subscription is no longer listed
+    // Uses the subscription from setup
+    // Unsubscribe the subscription from sns check against the statuscode
+    // Also checking that the subscription is no longer listed
     function testUnsubscribe() {
 
         local params = {
             "SubscriptionArn": _subscriptionArn
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Unsubscribe(params, function(res) {
+            _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
 
-                    _sns.ListSubscriptions({}, function(res) {
+                    _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
 
                         this.assertTrue(res.body.find(_subscriptionArn) == null, "Actual index " + res.body.find(_subscriptionArn));
                         resolve();
@@ -418,19 +404,17 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
     // Fail to unsubscribe the subscription from sns check against the statuscode
-    // check to ensure that the subscription is still present
+    // Check to ensure that the subscription is still present
     function testFailUnsubscribe() {
 
         local params = {
             "SubscriptionArn": AWS_SNS_INVALID_SUBSCRIPTION_ARN
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Unsubscribe(params, function(res) {
+            _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -442,20 +426,18 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
-    // test obtaining a list of subscriptions for a an invalid topic
-    // tests by confirming a http bad request status
+    // Test obtaining a list of subscriptions for a an invalid topic
+    // Tests by confirming a http bad request status
     function testFailListSubscriptionTopic() {
 
-        // params with an invalid topic
-        local Params = {
+        // Params with an invalid topic
+        local params = {
             "TopicArn": AWS_SNS_INVALID_TOPIC_ARN
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.ListSubscriptionsByTopic(Params, function(res) {
+            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -468,15 +450,13 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
-
-
-    // test the list of Topics, checking against the status code
-    // also checking if the Topic we are subscribing to is is retrievable
+    // Test the list of Topics, checking against the status code
+    // Also checking if the Topic we are subscribing to is is retrievable
     function testListTopics() {
 
         return Promise(function(resolve, reject) {
 
-            _sns.ListTopics({}, function(res) {
+            _sns.action(AWSSNS_ACTION_LIST_TOPICS, {}, function(res) {
 
                 try {
                     this.assertTrue(res.body.find(AWS_SNS_TOPIC_ARN) != null, "TopicArn not found");
@@ -490,52 +470,47 @@ class AgentTestCase extends ImpTestCase {
         }.bindenv(this));
     }
 
-
-
-    // tests that the publish function is sent correctly, checks against the statuscode received
+    // Tests that the publish function is sent correctly, checks against the statuscode received
     function testPublish() {
 
-        // required params to publish
+        // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
-            "TopicArn": AWS_SNS_TOPIC_ARN,
-        }
+            "TopicArn": AWS_SNS_TOPIC_ARN
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Publish(params, function(res) {
+            _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
 
                 try {
-                    // checks the received status code
+                    // Checks the received status code
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
                     resolve();
                 } catch (e) {
                     reject(e);
                 }
 
-
             }.bindenv(this));
         }.bindenv(this));
 
     }
 
-
-
-    // test publishing to a non existent topicArn, should receive a http status code 400
+    // Test publishing to a non existent topicArn, should receive a http status code 400
     function testFailPublish() {
 
-        // required params to publish
+        // Required params to publish
         local params = {
             "Message": AWS_SNS_MESSAGE,
-            "TopicArn": AWS_SNS_INVALID_TOPIC_ARN,
-        }
+            "TopicArn": AWS_SNS_INVALID_TOPIC_ARN
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Publish(params, function(res) {
+            _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
 
                 try {
-                    // checks the received status code
+                    // Checks the received status code
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
                     resolve();
                 } catch (e) {
@@ -545,8 +520,6 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
         }.bindenv(this));
     }
-
-
 
     // Invalid number of parameters checks status code for Confirmation
     function testFailSubscribe() {
@@ -554,11 +527,11 @@ class AgentTestCase extends ImpTestCase {
         local subscribeParams = {
             "Protocol": AWS_SNS_PROTOCOL_HTTPS,
             "Endpoint": http.agenturl()
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Subscribe(subscribeParams, function(res) {
+            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -572,23 +545,19 @@ class AgentTestCase extends ImpTestCase {
 
     }
 
+    // Cleanup after
+    function tearDown() {
 
-
-    // cleanup after
-	function tearDown() {
-
-		local params = {
+        local params = {
             "SubscriptionArn": _subscriptionArn
-        }
+        };
 
         return Promise(function(resolve, reject) {
 
-            _sns.Unsubscribe(params, function(res) {
-
-				resolve();
+            _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
+                resolve();
             }.bindenv(this));
+
         }.bindenv(this));
-	}
-
-
+    }
 }

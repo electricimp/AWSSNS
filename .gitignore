@@ -1,12 +1,17 @@
 .DS_Store
 *.wrench
 *.out
+*.out.nut
 .build_api_key.json
 *.swp
 src/vars.nut
 .imptest
+.impconfig
 AWSRequestV4.class.nut
 tests/device.nut
 tests/agent.nut
 agent.out.nut
 device.out.nut
+**/builds
+utilities.nut
+finished

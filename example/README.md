@@ -27,7 +27,7 @@ As the sample code includes the private key verbatim in the source, it should be
     1. Set `Effect` to `Allow`
     1. Set `AWS Service` to `Amazon SNS`
     1. Set `Actions` to `All Actions`
-    1. Set `Amazon Resource Name (ARN)` to Topic ARN from **Setting up a Topic in AWS SNS**
+    1. Set `Amazon Resource Name (ARN)` to `*`
     1. Press `Add Statement`
     1. Press `Next Step`
 1. Give your policy a name, for example, `allow-sns` and type in into the `Policy Name` field

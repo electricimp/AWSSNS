@@ -13,6 +13,8 @@ To add this library to your model, add the following lines to the top of your ag
 **Note: [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be
 included before the AWSSNS library to make it work.**
 
+[![Build Status](https://travis-ci.org/electricimp/AWSSNS.svg?branch=master)](https://travis-ci.org/electricimp/AWSSNS)
+
 ## Class Usage
 
 ### constructor(region, accessKeyId, secretAccessKey)

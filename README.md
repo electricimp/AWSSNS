@@ -11,7 +11,7 @@ To add this library to your model, add the following lines to the top of your ag
 ```
 
 **Note: [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be
-included before the AWSSQS library to make it work.**
+included before the AWSSNS library to make it work.**
 
 ## Class Usage
 

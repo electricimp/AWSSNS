@@ -109,7 +109,7 @@ Returns an XML list of the requester’s subscriptions as a string in the respon
 
 Parameter                 | Type    | Required | Default | Description
 ------------------------- | ------- | -------- | ------- | -------------------
-*NextToken*                 | String  | No       | `null`    | Token returned by the previous ListSubscriptions request.
+*NextToken*                 | String  | No       | `null`    | Token returned by the previous ListSubscriptions request
 
 ##### Example #####
 

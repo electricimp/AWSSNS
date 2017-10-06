@@ -39,13 +39,13 @@ sns <- AWSSNS(AWS_SNS_REGION, AWS_SNS_ACCESS_KEY_ID, AWS_SNS_SECRET_ACCESS_KEY);
 
 ### action(*actionType, params, callback*)
 
-This method performs a specified action (eg. publish) with the required parameters (*params*) for the specified `action`.
+This method performs a specified action (eg. publish) with the required parameters (*params*) for the specified action type.
 
 Parameter         |       Type     | Description
 ----------------- | -------------- | -----------
 *actionType*       | Constant         | The type of the Amazon SNS action that you want to perform (see ‘Action Types’, below)
 *params*            | Table          | Table of action-specific parameters (see ‘Action Parameters’, below)
-*callback*            | Function       | Callback function that takes one parameter: a response table
+*callback*            | Function       | Callback function that takes one parameter: a [Callback Response Table](#callback-response-table)
 
 #### Action Types
 
@@ -159,9 +159,8 @@ sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function (response
 
 #### AWSSNS_ACTION_LIST_TOPICS
 
-Returns an XMLl list of the requester’s topics as a string in the response table. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListTopics.html) for more information.
+Returns an XML list of the requester’s topics as a string in the response table. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListTopics.html) for more information.
 
-##### Action parameters ([`params`](#actionactiontype-params-cb) argument)
 Parameter                 | Type    | Required | Default | Description
 ------------------------- | ------- | -------- | ------- | --------------------
 *NextToken*                 | String  | No       | `null`  | Token returned by the previous ListTopics request

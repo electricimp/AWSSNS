@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-@include "github:electricimp/AWSRequestV4/AWSRequestV4.class.nut"
+@include "https://raw.githubusercontent.com/electricimp/AWSRequestV4/master/AWSRequestV4.class.nut"
 @include "AWSSNS.agent.lib.nut"
 
 // Please enter your AWS keys, region and SNS Topic ARN

@@ -180,7 +180,7 @@ Sends a message to an Amazon SNS topic or sends a text message (SMS message) dir
 Parameter                | Type    | Required | Default | Description
 ------------------------ | ------- | -------- | ------- | -------------------
 *Message*                  | String  | Yes      | N/A     | The message you want to send
-*MessageAttributes*        | Table   | No       | `null`    | *MessageAttributes.entry.N.Name* (key), *MessageAttributesentry.N.Value* (value) pairs. see the ‘MessageAttributes Values’ table, below, for more information
+*MessageAttributes*        | Table   | No       | `null`    | *MessageAttributes.entry.N.Name* (key), *MessageAttributes.entry.N.Value* (value) pairs. see the ‘MessageAttributes Values’ table, below, for more information
 *MessageStructure*         | String  | No       | `null`    | Set message structure to JSON if you want to send a different message for each protocol
 *PhoneNumber*              | String  | No       | `null`    | The phone number to which you want to deliver an SMS message
 *Subject*                  | String  | No       | `null`    | Optional parameter to be used as the ‘Subject’ line when the message is delivered to email endpoints

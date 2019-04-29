@@ -11,6 +11,8 @@ This library implements [Amazon Simple Notification Service (SNS)](https://aws.a
 
 **Note** [AWSRequestV4](https://github.com/electricimp/AWSRequestV4/) must be included **before** the AWSSNS library.
 
+![Build Status](https://cse-ci.electricimp.com/app/rest/builds/buildType:(id:Awssns_BuildAndTest)/statusIcon)
+
 ## Class Usage
 
 ### constructor(*region, accessKeyID, secretAccessKey*)

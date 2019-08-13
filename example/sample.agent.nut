@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2017 Electric Imp
+// Copyright 2017-19 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSSNS.agent.lib.nut:1.0.0"
+#require "AWSSNS.agent.lib.nut:2.0.0"
 
 
 // Configure these parameters see example/README.md for details
@@ -63,12 +63,12 @@ http.onrequest(function(request, response) {
             }
 
             // Confirm the subscription
-            sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
+            sns.action(AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
                 server.log("Confirmation Response: " + res.statuscode);
 
                 if (res.statuscode == 200) {
                     // Now that the subscription is established publish a message
-                    sns.action(AWSSNS_ACTION_PUBLISH, publishParams, function(res) {
+                    sns.action(AWSSNS_ACTIONS.PUBLISH, publishParams, function(res) {
                         server.log(" Publish Confirmation XML Response: " + res.body);
                     });
                 }
@@ -84,6 +84,6 @@ http.onrequest(function(request, response) {
 });
 
 // Subscribe to a topic
-sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
+sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function(res) {
     server.log("Subscribe Response: " + res.statuscode);
 });

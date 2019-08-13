@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2017 Electric Imp
+// Copyright 2017-19 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -22,37 +22,73 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-const AWSSNS_ACTION_CONFIRM_SUBSCRIPTION        = "ConfirmSubscription";
-const AWSSNS_ACTION_LIST_SUBSCRIPTIONS          = "ListSubscriptions";
-const AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC = "ListSubscriptionsByTopic";
-const AWSSNS_ACTION_LIST_TOPICS                 = "ListTopics";
-const AWSSNS_ACTION_PUBLISH                     = "Publish";
-const AWSSNS_ACTION_SUBSCRIBE                   = "Subscribe";
-const AWSSNS_ACTION_UNSUBSCRIBE                 = "Unsubscribe";
 
+/**
+ * Enum for SNS actions.
+ * @enum {string}
+ * @readonly
+*/
+enum AWSSNS_ACTIONS {
+    CONFIRM_SUBSCRIPTION        = "ConfirmSubscription",
+    LIST_SUBSCRIPTIONS          = "ListSubscriptions",
+    LIST_SUBSCRIPTIONS_BY_TOPIC = "ListSubscriptionsByTopic",
+    LIST_TOPICS                 = "ListTopics",
+    PUBLISH                     = "Publish",
+    SUBSCRIBE                   = "Subscribe",
+    UNSUBSCRIBE                 = "Unsubscribe"
+}
+
+/**
+ * Enum for SNS action response indentifiers.
+ * @enum {string}
+ * @readonly
+*/
+enum AWSSNS_RESPONSES {
+    SUBSCRIPTION_CONFIRMATION = "SubscriptionConfirmation",
+}
+
+/**
+ * Squirrel class providing support for AWS' SNS service.
+ *
+ * Availibility Agent
+ * Requires     AWSRequestV4
+ * @author      Pavel Petrosenko
+ * @license     MIT
+ *
+ * @class
+*/
 class AWSSNS {
 
-    static VERSION = "1.0.0";
+    static VERSION = "2.0.0";
 
     _awsRequest = null;
 
-    // Parameters:
-    //     region            AWS region
-    //     accessKeyId       AWS access key Id
-    //     secretAccessKey   AWS secret access key
+    /**
+     * Instantiate the AWSSNS class.
+     *
+     * @constructor
+     *
+     * @param {USB.Device} region          - AWS region.
+     * @param {USB.Device} accessKeyId     - AWS access key ID.
+     * @param {USB.Device} secretAccessKey - AWS secret access key.
+     *
+     * @returns {instance} The instance.
+     */
     constructor(region, accessKeyId, secretAccessKey) {
         if ("AWSRequestV4" in getroottable()) {
             _awsRequest = AWSRequestV4("sns", region, accessKeyId, secretAccessKey);
         } else {
-            throw("This class requires AWSRequestV4 - please make sure it is loaded.");
+            throw "This class requires AWSRequestV4 - please make sure it is loaded.";
         }
     }
 
-    // Performs the specified action
-    //
-    // Parameters:
-    //      params              table of parameters to be sent as part of the request
-    //      cb                  callback function to be called when response received from aws
+    /**
+     * Performs the specified action.
+     *
+     * @param {string}   action - The name of the action to be performed.
+     * @param {table}    params - Parameters to be sent as part of the request.
+     * @param {function} cb     - Callback function triggered when response received from AWS.
+    */
     function action(action, params, cb) {
         local headers = {"Content-Type": "application/x-www-form-urlencoded"};
         local body = {

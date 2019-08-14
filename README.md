@@ -31,10 +31,10 @@ This library implements [Amazon Simple Notification Service (SNS)](https://aws.a
 #require "AWSRequestV4.class.nut:1.0.2"
 #require "AWSSNS.agent.lib.nut:2.0.0"
 
+const AWS_SNS_REGION            = "<YOUR_REGION>";
 const AWS_SNS_ACCESS_KEY_ID     = "<YOUR_ACCESS_KEY_ID>";
 const AWS_SNS_SECRET_ACCESS_KEY = "<YOUR_SECRET_ACCESS_KEY_ID>";
-const AWS_SNS_URL               = "<YOUR_SNS_URL>";
-const AWS_SNS_REGION            = "<YOUR_REGION>";
+const AWS_SNS_TOPIC_ARN         = "< YOUR_TOPIC_ARN_HERE>";
 
 // Instantiate the class
 sns <- AWSSNS(AWS_SNS_REGION,
@@ -62,15 +62,15 @@ The following action types are provided by the library through its own constants
 
 | Action Type Constant | Description |
 | --- | --- |
-| [*AWSSNS_ACTION_CONFIRM_SUBSCRIPTION*](#awssns_action_confirm_subscription) | Verifies an endpoint owner’s intent to receive messages |
-| [*AWSSNS_ACTION_LIST_SUBSCRIPTIONS*](#awssns_action_list_subscriptions) | Returns an XML list of the requester’s subscriptions |
-| [*AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC*](#awssns_action_list_subscriptions_by_topic) | Returns an XML list of the subscriptions to a specific topic |
-| [*AWSSNS_ACTION_LIST_TOPICS*](#awssns_action_list_topics) | Returns an XML list of the requester’s topics |
-| [*AWSSNS_ACTION_PUBLISH*](#awssns_action_publish) | Sends a message to an Amazon SNS topic |
-| [*AWSSNS_ACTION_SUBSCRIBE*](#awssns_action_subscribe) | Prepares to subscribe to an endpoint |
-| [*AWSSNS_ACTION_UNSUBSCRIBE*](#awssns_action_unsubscribe) | Deletes a subscription |
+| [*AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION*](#awssns_action_confirm_subscription) | Verifies an endpoint owner’s intent to receive messages |
+| [*AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS*](#awssns_action_list_subscriptions) | Returns an XML list of the requester’s subscriptions |
+| [*AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC*](#awssns_action_list_subscriptions_by_topic) | Returns an XML list of the subscriptions to a specific topic |
+| [*AWSSNS_ACTIONS.LIST_TOPICS*](#awssns_action_list_topics) | Returns an XML list of the requester’s topics |
+| [*AWSSNS_ACTIONS.PUBLISH*](#awssns_action_publish) | Sends a message to an Amazon SNS topic |
+| [*AWSSNS_ACTIONS.SUBSCRIBE*](#awssns_action_subscribe) | Prepares to subscribe to an endpoint |
+| [*AWSSNS_ACTIONS.UNSUBSCRIBE*](#awssns_action_unsubscribe) | Deletes a subscription |
 
-#### AWSSNS_ACTION_CONFIRM_SUBSCRIPTION ####
+#### AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION ####
 
 Verifies an endpoint owner’s intent to receive messages by validating the token sent to the endpoint by an earlier Subscribe action. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ConfirmSubscription.html) for more information.
 
@@ -87,26 +87,38 @@ Verifies an endpoint owner’s intent to receive messages by validating the toke
 #### Example ####
 
 ```squirrel
-http.onrequest(function (request, response) {
+subscriptionArn <- "";
+
+// Handle incoming HTTP requests which are sent in response to subscription to confirm said subscription
+http.onrequest(function(request, response) {
     try {
         local requestBody = http.jsondecode(request.body);
 
-        // Handle an SES SubscriptionConfirmation request
+        // Handle an SNS SubscriptionConfirmation request
         if ("Type" in requestBody && requestBody.Type == AWSSNS_RESPONSES.SUBSCRIPTION_CONFIRMATION) {
             server.log("Received HTTP Request: AWS SNS SubscriptionConfirmation");
 
             local confirmParams = {
                 "Token": requestBody.Token,
                 "TopicArn": requestBody.TopicArn
-            };
+            }
 
-            sns.action(AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION, confirmParams, function (response) {
-                server.log("Confirmation Response: " + response.statuscode);
+            subscriptionArn = requestBody.TopicArn;
+
+            // Confirm the subscription
+            sns.action(AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
+                server.log("Confirmation Response: " + res.statuscode);
+
+                if (res.statuscode == 200) {
+                    // Now that the subscription is established publish a message
+                    sns.action(AWSSNS_ACTIONS.PUBLISH, publishParams, function(res) {
+                        server.log(" Publish Confirmation XML Response: " + res.body);
+                    });
+                }
             });
         }
 
         response.send(200, "OK");
-
     } catch (exception) {
         server.log("Error handling HTTP request: " + exception);
         response.send(500, "Internal Server Error: " + exception);
@@ -114,7 +126,7 @@ http.onrequest(function (request, response) {
 });
 ```
 
-#### AWSSNS_ACTION_LIST_SUBSCRIPTIONS ####
+#### AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS ####
 
 Returns an XML list of the requester’s subscriptions as a string in the response table. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListSubscriptions.html) for more information.
 
@@ -132,7 +144,7 @@ sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS, {}, function (response) {
 });
 ```
 
-#### AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC ####
+#### AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC ####
 
 Returns an XML list of the subscriptions to a specific topic as a string in the response table. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListSubscriptionsByTopic.html) for more information.
 
@@ -172,7 +184,7 @@ sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC, params, function (respons
 });
 ```
 
-#### AWSSNS_ACTION_LIST_TOPICS ####
+#### AWSSNS_ACTIONS.LIST_TOPICS ####
 
 Returns an XML list of the requester’s topics as a string in the response table. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_ListTopics.html) for more information.
 
@@ -190,7 +202,7 @@ sns.action(AWSSNS_ACTIONS.LIST_TOPICS, {}, function (response) {
 })
 ```
 
-#### AWSSNS_ACTION_PUBLISH ####
+#### AWSSNS_ACTIONS.PUBLISH ####
 
 Sends a message to an Amazon SNS topic or sends a text message (SMS) directly to a phone number. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Publish.html) for more information.
 
@@ -229,7 +241,7 @@ sns.action(AWSSNS_ACTIONS.PUBLISH, params, function (response) {
 });
 ```
 
-#### AWSSNS_ACTION_SUBSCRIBE ####
+#### AWSSNS_ACTIONS.SUBSCRIBE ####
 
 Prepares to subscribe to an endpoint by sending the endpoint a confirmation message. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Subscribe.html) for more information.
 
@@ -246,7 +258,7 @@ Prepares to subscribe to an endpoint by sending the endpoint a confirmation mess
 ```squirrel
 subscribeParams <- {
     "Protocol": "https",
-    "TopicArn": "YOUR_TOPIC_ARN_HERE",
+    "TopicArn": AWS_SNS_TOPIC_ARN,
     "Endpoint": http.agenturl()
 };
 
@@ -255,7 +267,7 @@ sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function (response) {
 });
 ```
 
-#### AWSSNS_ACTION_UNSUBSCRIBE ####
+#### AWSSNS_ACTIONS.UNSUBSCRIBE ####
 
 Deletes a subscription. Please view the [AWS SNS documentation](http://docs.aws.amazon.com/sns/latest/api/API_Unsubscribe.html) for more information.
 
@@ -271,7 +283,7 @@ See the ConfirmSubscription [example](#ida) to see how to get a value for *Subsc
 
 ```squirrel
 local params = {
-    "SubscriptionArn": "YOUR_SUBSCRIPTION_ARN_HERE"
+    "SubscriptionArn": subscriptionArn
 };
 
 sns.action(AWSSNS_ACTIONS.UNSUBSCRIBE, params, function(response) {

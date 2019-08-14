@@ -27,7 +27,7 @@
 
 
 // Configure these parameters see example/README.md for details
-const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE"
+const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE";
 const AWS_SNS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_HERE";
 const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY_HERE";
 const AWS_SNS_TOPIC_ARN = "YOUR_TOPIC_ARN_HERE";
@@ -49,13 +49,12 @@ publishParams <- {
 
 // Handle incoming HTTP requests which are sent in response to subscription to confirm said subscription
 http.onrequest(function(request, response) {
-
     try {
         local requestBody = http.jsondecode(request.body);
 
-        // Handle an SES SubscriptionConfirmation request
-        if ("Type" in requestBody && requestBody.Type == "SubscriptionConfirmation") {
-            server.log("Received HTTP Request: AWS_SNS SubscriptionConfirmation");
+        // Handle an SNS SubscriptionConfirmation request
+        if ("Type" in requestBody && requestBody.Type == AWSSNS_RESPONSES.SUBSCRIPTION_CONFIRMATION) {
+            server.log("Received HTTP Request: AWS SNS SubscriptionConfirmation");
 
             local confirmParams = {
                 "Token": requestBody.Token,
@@ -80,7 +79,6 @@ http.onrequest(function(request, response) {
         server.log("Error handling HTTP request: " + exception);
         response.send(500, "Internal Server Error: " + exception);
     }
-
 });
 
 // Subscribe to a topic

@@ -68,9 +68,9 @@ class AWSSNS {
      *
      * @constructor
      *
-     * @param {USB.Device} region          - AWS region.
-     * @param {USB.Device} accessKeyId     - AWS access key ID.
-     * @param {USB.Device} secretAccessKey - AWS secret access key.
+     * @param {USB.Device} region          - An AWS region.
+     * @param {USB.Device} accessKeyId     - An AWS access key ID.
+     * @param {USB.Device} secretAccessKey - An AWS secret access key.
      *
      * @returns {instance} The instance.
      */

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2017 Electric Imp
+// Copyright 2017-19 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -92,7 +92,7 @@ class AgentTestCase extends ImpTestCase {
                             "Token": requestBody.Token,
                             "TopicArn": requestBody.TopicArn
                         };
-                        _sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
+                        _sns.action(AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                             try {
                                 if (firstInstanceConfirmation == true) {
@@ -112,7 +112,7 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
 
             // Fresh subscribe to ensure timely http message sent to the agent
-            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
+            _sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
 
@@ -137,7 +137,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
+            _sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function(res) {
 
                 try {
                     this.assertTrue(subscriptionFinder(res.body) == "pending confirmation", "actual status " + subscriptionFinder(res.body));
@@ -189,7 +189,7 @@ class AgentTestCase extends ImpTestCase {
                             "Token": requestBody.Token,
                             "TopicArn": requestBody.TopicArn
                         };
-                        _sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
+                        _sns.action(AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
 
                             try {
                                 if (firstInstanceConfirmation == true) {
@@ -211,7 +211,7 @@ class AgentTestCase extends ImpTestCase {
             }.bindenv(this));
 
             // Fresh subscribe to ensure timely http message sent to the agent
-            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {});
+            _sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function(res) {});
         }.bindenv(this));
     }
 
@@ -244,12 +244,12 @@ class AgentTestCase extends ImpTestCase {
         return Promise(function(resolve, reject) {
 
             imp.wakeup(5, function() {
-                _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
+                _sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS, {}, function(res) {
 
                     if (endpointFinder(res.body, _endpoint) == null) {
                         imp.wakeup(5, function() {
 
-                            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
+                            _sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS, {}, function(res) {
 
                                 try {
                                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
@@ -317,7 +317,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
 
                 try {
                     this.assertTrue(_subscriptionArn == subscriptionFinder(res.body, endpointFinder(res.body, _endpoint)), "Actual Arn " + subscriptionFinder(res.body, endpointFinder(res.body, _endpoint)));
@@ -338,7 +338,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_LIST_TOPICS, {}, function(res) {
+            _sns.action(AWSSNS_ACTIONS.LIST_TOPICS, {}, function(res) {
 
                 try {
                     this.assertTrue(res.body.find(AWS_SNS_TOPIC_ARN) != null, "TopicArn not found");
@@ -363,7 +363,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.PUBLISH, params, function(res) {
 
                 try {
                     // Checks the received status code
@@ -389,12 +389,12 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.UNSUBSCRIBE, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_SUCCESS, "Actual response " + res.statuscode);
 
-                    _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS, {}, function(res) {
+                    _sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS, {}, function(res) {
 
                         this.assertTrue(res.body.find(_subscriptionArn) == null, "Actual index " + res.body.find(_subscriptionArn));
                         resolve();
@@ -417,7 +417,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.UNSUBSCRIBE, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -440,7 +440,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC, params, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -459,7 +459,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_LIST_TOPICS, {}, function(res) {
+            _sns.action(AWSSNS_ACTIONS.LIST_TOPICS, {}, function(res) {
 
                 try {
                     this.assertTrue(res.body.find(AWS_SNS_TOPIC_ARN) != null, "TopicArn not found");
@@ -484,7 +484,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.PUBLISH, params, function(res) {
 
                 try {
                     // Checks the received status code
@@ -510,7 +510,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_PUBLISH, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.PUBLISH, params, function(res) {
 
                 try {
                     // Checks the received status code
@@ -534,7 +534,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
+            _sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function(res) {
 
                 try {
                     this.assertTrue(res.statuscode == AWS_TEST_HTTP_RESPONSE_BAD_REQUEST, "Actual response " + res.statuscode);
@@ -557,7 +557,7 @@ class AgentTestCase extends ImpTestCase {
 
         return Promise(function(resolve, reject) {
 
-            _sns.action(AWSSNS_ACTION_UNSUBSCRIBE, params, function(res) {
+            _sns.action(AWSSNS_ACTIONS.UNSUBSCRIBE, params, function(res) {
                 resolve();
             }.bindenv(this));
 

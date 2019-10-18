@@ -1,63 +1,59 @@
 # Demo Instructions
 
-This demo will show you how to subscribe, confirm a subscription and publish a message to a topic
+This demo will show you how to subscribe, confirm a subscription and publish a message to a topic.
 
 As the sample code includes the private key verbatim in the source, it should be treated carefully, and not checked into version control!
 
+## Set Up A Topic In AWS SNS ##
 
-## Setting up a Topic in AWS SNS
+1. Login to the [AWS console](https://aws.amazon.com/console/).
+1. Select **Services link** (on the top left of the page) and then type `SNS` in the search line.
+1. Select **Simple Notification Service**.
+1. Click **Create Topic**.
+1. Enter `testSNS` under **Topic name**.
+1. Enter `testSNS` under **DisplayName**.
+1. Click **Create Topic*.
+1. Note your Topic ARN and your Region.
 
-1. Login to the [AWS console](https://aws.amazon.com/console/)
-1. Select `Services link` (on the top left of the page) and then type `SNS` in the search line
-1. Select `Simple Notification Service`
-1. Click `Create Topic`
-1. Enter in `Topic name` "testSNS"
-1. Enter in `DisplayName` "testSNS"
-1. Click `Create Topic`
-1. Note your Topic ARN and your Region
+## Set Up An IAM Policy ##
 
-## Setting up IAM Policy
+1. Select the **Services** link (on the top left of the page) and them type `IAM` in the search line.
+1. Select the **IAM Manage User Access and Encryption Keys** item.
+1. Select the **Policies** item from the menu on the left.
+1. Click **Create Policy**.
+1. Click **Select** under **Policy Generator**.
+1. On the **Edit Permissions** page do the following:
+    1. Set **Effect** to **Allow**.
+    1. Set **AWS Service** to **Amazon SNS**.
+    1. Set **Actions** to **All Actions**.
+    1. Set **Amazon Resource Name (ARN)** to **&#42;**.
+    1. Click **Add Statement**.
+    1. Click **Next Step**.
+1. Give your policy a name, for example, `allow-sns` and type in into the **Policy Name** field.
+1. Click **Create Policy**.
 
-1. Select `Services` link (on the top left of the page) and them type `IAM` in the search line
-1. Select `IAM Manage User Access and Encryption Keys` item
-1. Select `Policies` item from the menu on the left
-1. Press `Create Policy` button
-1. Press `Select` for `Policy Generator`
-1. On the `Edit Permissions` page do the following
-    1. Set `Effect` to `Allow`
-    1. Set `AWS Service` to `Amazon SNS`
-    1. Set `Actions` to `All Actions`
-    1. Set `Amazon Resource Name (ARN)` to `*`
-    1. Press `Add Statement`
-    1. Press `Next Step`
-1. Give your policy a name, for example, `allow-sns` and type in into the `Policy Name` field
-1. Press `Create Policy`
+## Set Up An IAM User ##
 
-## Setting up the IAM User
+1. Select the **Services** link (on the top left of the page) and them type `IAM` in the search line.
+1. Select the **IAM Manage User Access and Encryption Keys** item.
+1. Select the **Users** item from the menu on the left.
+1. Click **Add user**.
+1. Choose a user name, for example `user-calling-sns`.
+1. Check **Programmatic access** but not anything else.
+1. Click **Next: Permissions**
+1. Click the **Attach existing policies directly** icon.
+1. Check **allow-sns** from the list of policies.
+1. Click **Next: Review**.
+1. Click **Create user**.
+1. Note your Access key ID and Secret access key values.
 
-1. Select `Services` link (on the top left of the page) and them type `IAM` in the search line
-1. Select the `IAM Manage User Access and Encryption Keys` item
-1. Select `Users` item from the menu on the left
-1. Press `Add user`
-1. Choose a user name, for example `user-calling-sns`
-1. Check `Programmatic access` but not anything else
-1. Press `Next: Permissions` button
-1. Press `Attach existing policies directly` icon
-1. Check `allow-sns` from the list of policies
-1. Press `Next: Review`
-1. Press `Create user`
-1. Copy down your `Access key ID` and `Secret access key`
+## Configure The API Keys For SNS ##
 
-## Configure the API keys for SNS
+At the top of the `sample.agent.nut` file there are three constants that need to be configured:
 
-At the top of the sample.agent.nut there are three constants that need to be configured.
-
-Parameter                   | Description
---------------------------- | -----------
-AWS_TEST_REGION             | AWS region (e.g. "us-west-2")
-AWS_SNS_ACCESS_KEY_ID       | IAM Access Key ID
-AWS_SNS_SECRET_ACCESS_KEY   | IAM Secret Access Key
-AWS_SNS_TOPIC_ARN           | Your SNS TOPIC ARN
-
-
-The AWSSNS library is licensed under the [MIT License](../LICENSE).
+Constant                      | Description
+----------------------------- | -----------
+*AWS_TEST_REGION*             | An AWS region (eg. `"us-west-2"`)
+*AWS_SNS_ACCESS_KEY_ID*       | Your IAM Access Key ID
+*AWS_SNS_SECRET_ACCESS_KEY*   | Your IAM Secret Access Key
+*AWS_SNS_TOPIC_ARN*           | Your SNS TOPIC ARN

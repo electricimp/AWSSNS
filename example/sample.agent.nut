@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2017 Electric Imp
+// Copyright 2017-19 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -23,11 +23,11 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 #require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSSNS.agent.lib.nut:1.0.0"
+#require "AWSSNS.agent.lib.nut:2.0.0"
 
 
 // Configure these parameters see example/README.md for details
-const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE"
+const AWS_SNS_TEST_REGION = "YOUR_REGION_HERE";
 const AWS_SNS_ACCESS_KEY_ID = "YOUR_AWS_ACCESS_KEY_HERE";
 const AWS_SNS_SECRET_ACCESS_KEY = "YOUR_AWS_SECRET_ACCESS_KEY_HERE";
 const AWS_SNS_TOPIC_ARN = "YOUR_TOPIC_ARN_HERE";
@@ -49,13 +49,12 @@ publishParams <- {
 
 // Handle incoming HTTP requests which are sent in response to subscription to confirm said subscription
 http.onrequest(function(request, response) {
-
     try {
         local requestBody = http.jsondecode(request.body);
 
-        // Handle an SES SubscriptionConfirmation request
-        if ("Type" in requestBody && requestBody.Type == "SubscriptionConfirmation") {
-            server.log("Received HTTP Request: AWS_SNS SubscriptionConfirmation");
+        // Handle an SNS SubscriptionConfirmation request
+        if ("Type" in requestBody && requestBody.Type == AWSSNS_RESPONSES.SUBSCRIPTION_CONFIRMATION) {
+            server.log("Received HTTP Request: AWS SNS SubscriptionConfirmation");
 
             local confirmParams = {
                 "Token": requestBody.Token,
@@ -63,12 +62,12 @@ http.onrequest(function(request, response) {
             }
 
             // Confirm the subscription
-            sns.action(AWSSNS_ACTION_CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
+            sns.action(AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION, confirmParams, function(res) {
                 server.log("Confirmation Response: " + res.statuscode);
 
                 if (res.statuscode == 200) {
                     // Now that the subscription is established publish a message
-                    sns.action(AWSSNS_ACTION_PUBLISH, publishParams, function(res) {
+                    sns.action(AWSSNS_ACTIONS.PUBLISH, publishParams, function(res) {
                         server.log(" Publish Confirmation XML Response: " + res.body);
                     });
                 }
@@ -80,10 +79,9 @@ http.onrequest(function(request, response) {
         server.log("Error handling HTTP request: " + exception);
         response.send(500, "Internal Server Error: " + exception);
     }
-
 });
 
 // Subscribe to a topic
-sns.action(AWSSNS_ACTION_SUBSCRIBE, subscribeParams, function(res) {
+sns.action(AWSSNS_ACTIONS.SUBSCRIBE, subscribeParams, function(res) {
     server.log("Subscribe Response: " + res.statuscode);
 });

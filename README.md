@@ -62,13 +62,13 @@ The following action types are provided by the library through its own constants
 
 | Action Type Constant | Description |
 | --- | --- |
-| [*AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION*](#awssns_action_confirm_subscription) | Verifies an endpoint owner’s intent to receive messages |
-| [*AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS*](#awssns_action_list_subscriptions) | Returns an XML list of the requester’s subscriptions |
-| [*AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC*](#awssns_action_list_subscriptions_by_topic) | Returns an XML list of the subscriptions to a specific topic |
-| [*AWSSNS_ACTIONS.LIST_TOPICS*](#awssns_action_list_topics) | Returns an XML list of the requester’s topics |
-| [*AWSSNS_ACTIONS.PUBLISH*](#awssns_action_publish) | Sends a message to an Amazon SNS topic |
-| [*AWSSNS_ACTIONS.SUBSCRIBE*](#awssns_action_subscribe) | Prepares to subscribe to an endpoint |
-| [*AWSSNS_ACTIONS.UNSUBSCRIBE*](#awssns_action_unsubscribe) | Deletes a subscription |
+| [*AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION*](#awssns_actionsconfirm_subscription) | Verifies an endpoint owner’s intent to receive messages |
+| [*AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS*](#awssns_actionslist_subscriptions) | Returns an XML list of the requester’s subscriptions |
+| [*AWSSNS_ACTIONS.LIST_SUBSCRIPTIONS_BY_TOPIC*](#awssns_actionslist_subscriptions_by_topic) | Returns an XML list of the subscriptions to a specific topic |
+| [*AWSSNS_ACTIONS.LIST_TOPICS*](#awssns_actionslist_topics) | Returns an XML list of the requester’s topics |
+| [*AWSSNS_ACTIONS.PUBLISH*](#awssns_actionspublish) | Sends a message to an Amazon SNS topic |
+| [*AWSSNS_ACTIONS.SUBSCRIBE*](#awssns_actionssubscribe) | Prepares to subscribe to an endpoint |
+| [*AWSSNS_ACTIONS.UNSUBSCRIBE*](#awssns_actionsunsubscribe) | Deletes a subscription |
 
 #### AWSSNS_ACTIONS.CONFIRM_SUBSCRIPTION ####
 
